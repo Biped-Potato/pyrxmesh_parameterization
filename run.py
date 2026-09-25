@@ -5,6 +5,7 @@ import pyrxmesh as rx
 import pyrxmesh_parameterization
 import igl
 import torch
+import polyscope as ps
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -22,11 +23,15 @@ def main() -> None:
     args = parser.parse_args()
 
     torch.cuda.set_device(args.device_id)
+    
     rx.init(args.device_id)
     mesh = rx.RXMeshStatic(str(args.obj_file_name))
 
     if mesh.is_closed():
         raise ValueError("The input mesh is closed. THe input mesh should have boundaries.")
+
+    ps.init()
+    ps_mesh = ps.register_surface_mesh("mesh", mesh.vertices(), mesh.faces())
 
     coordinates = mesh.input_vertex_coordinates()
     
@@ -53,11 +58,15 @@ def main() -> None:
             )
         uv_attr.from_numpy_copy(uv[:,:2], target="all")
 
+    
+
     pyrxmesh_parameterization.compute_rest_shape(mesh,coordinates,rest_shape)
 
     energy = pyrxmesh_parameterization.make_energy(mesh, rest_shape)
 
     uv = uv_attr.to_torch("device").detach().requires_grad_(True)
+
+    ps_mesh.add_parameterization_quantity("input_uv", uv_attr.to_numpy_copy(source="device"))
 
     #perform gradient descent
     gradient = torch.empty(uv.shape, dtype=uv.dtype, device=uv.device)
@@ -82,7 +91,11 @@ def main() -> None:
 
     rx.cuda_stream_synchronize()
     
-    values = rest_shape.to_numpy_copy(source="device")
+    values = uv_attr.to_numpy_copy(source="device")
+
+    ps_mesh.add_parameterization_quantity("uv", uv_attr.to_numpy_copy(source="device"))
+
+    ps.show()
     
     for i in range(len(values)):
         print(values[i])
