@@ -12,7 +12,7 @@ void compute_rest_shape(py::object mesh_obj,
                           py::object coords_obj,
                           py::object rest_coords_obj)
 {
-    auto coordinates = pyrxmesh::vertex_attribute<float>(coords_obj);
+    auto coordinates = pyrxmesh::vertex_attribute<T>(coords_obj);
     // 2x2 column major matrix as a vector
     auto rest_shape  = pyrxmesh::face_attribute<T>(rest_coords_obj);
 
@@ -51,8 +51,9 @@ void compute_rest_shape(py::object mesh_obj,
             rest_shape(fh, 3) = fout(1, 1);
         });
 }
+
 using Problem =
-    diff::ScalarGradientProblem<float, 2, VertexHandle>;
+    diff::ScalarGradientProblem<T, 2, VertexHandle>;
 
 void add_terms(Problem& problem, py::object rest_coords_obj){
     auto rest_shape  = pyrxmesh::face_attribute<T>(rest_coords_obj);
