@@ -11,31 +11,31 @@ bunnyhead.obj
 
 command: python run.py --obj-file-name=bunnyhead.obj --learning-rate=1e-9 --num-iter=100 --polyscope=0
 ```
-iterations = 100, energy = 3145.810303 -> 2169.919678, time = 16.402300 ms
-iterations = 100, energy = 3145.810547 -> 2169.920898, time = 15.579800 ms
-iterations = 100, energy = 3145.808350 -> 2169.920898, time = 16.634000 ms
-iterations = 100, energy = 3145.809326 -> 2169.921631, time = 15.097500 ms
-iterations = 100, energy = 3145.809814 -> 2169.921631, time = 16.449700 ms
+iterations = 100, energy = 3145.810547 -> 2169.919922, time = 6.522528 ms
+iterations = 100, energy = 3145.810303 -> 2169.919678, time = 6.891808 ms
+iterations = 100, energy = 3145.809570 -> 2169.921875, time = 6.939456 ms
+iterations = 100, energy = 3145.809570 -> 2169.921631, time = 6.955488 ms
+iterations = 100, energy = 3145.810547 -> 2169.919678, time = 6.838656 ms
 ```
 armadillo_cut_high
 
-command: python run.py --obj-file-name=armadillo_cut_high.obj --learning-rate=1e-15 --num-iter=100 --polyscope=0
+command: python run.py --obj-file-name=armadillo_cut_high.obj --uv-file-name=armadillo_cut_high_uv.obj --learning-rate=1e-15 --num-iter=100 --polyscope=0
 ```
-iterations = 100, energy = 54410.917969 -> 45229.300781, time = 21.219100 ms
-iterations = 100, energy = 54406.000000 -> 45315.683594, time = 20.685500 ms
-iterations = 100, energy = 54356.074219 -> 45287.746094, time = 21.624200 ms
-iterations = 100, energy = 54442.101562 -> 45329.718750, time = 22.042000 ms
-iterations = 100, energy = 54246.734375 -> 45265.785156, time = 21.768800 ms
+iterations = 100, energy = 55968.761719 -> 45667.226562, time = 20.283424 ms
+iterations = 100, energy = 55968.769531 -> 45667.230469, time = 20.591743 ms
+iterations = 100, energy = 55968.777344 -> 45667.230469, time = 19.877792 ms
+iterations = 100, energy = 55968.765625 -> 45667.222656, time = 20.516865 ms
+iterations = 100, energy = 55968.765625 -> 45667.230469, time = 20.791264 ms
 ```
 camel_head
 
 command: python run.py --obj-file-name=camel_head.obj --learning-rate=1e-9 --num-iter=100 --polyscope=0
 ```
-iterations = 100, energy = 67.383987 -> 66.437096, time = 15.962100 ms
-iterations = 100, energy = 67.383987 -> 66.437096, time = 15.713600 ms
-iterations = 100, energy = 67.383934 -> 66.437759, time = 16.663200 ms
-iterations = 100, energy = 67.384033 -> 66.437477, time = 16.402000 ms
-iterations = 100, energy = 67.383980 -> 66.436974, time = 15.369400 ms
+iterations = 100, energy = 67.383957 -> 66.437309, time = 6.609120 ms
+iterations = 100, energy = 67.383972 -> 66.436981, time = 6.612768 ms
+iterations = 100, energy = 67.383972 -> 66.437912, time = 7.226720 ms
+iterations = 100, energy = 67.383995 -> 66.436836, time = 6.827936 ms
+iterations = 100, energy = 67.384003 -> 66.436920, time = 6.827040 ms
 ```
 
 ## RXMesh
@@ -55,14 +55,22 @@ iterations= 100, energy= 3145.8389 -> 2168.0693, time= 4.677568 (ms)
 
 armadillo_cut_high
 
-run command: param.exe --input=C:/dev/pyrxmesh_parameterization/meshes/armadillo_cut_high.obj --lr=1e-15 --iter=100
+run command: param.exe --input=C:/dev/pyrxmesh_parameterization/meshes/armadillo_cut_high.obj --uv=C:/dev/pyrxmesh_parameterization/input_uvs/armadillo_cut_high_uv.obj --lr=1e-15 --iter=100
 
 ```
-
+iterations= 100, energy= 55968.766 -> 45667.227, time= 12.898816 (ms)
+iterations= 100, energy= 55968.766 -> 45667.227, time= 12.964448 (ms)
+iterations= 100, energy= 55968.76 -> 45667.227, time= 13.216096 (ms)
+iterations= 100, energy= 55968.76 -> 45667.22, time= 12.855968 (ms)
+iterations= 100, energy= 55968.76 -> 45667.223, time= 12.913408 (ms)
 ```
 camel_head
 
 run command: param.exe --input=C:/dev/pyrxmesh_parameterization/meshes/camel_head.obj --lr=1e-9 --iter=100
 ```
-
+iterations= 100, energy= 67.39735 -> 66.44523, time= 4.387904 (ms)
+iterations= 100, energy= 67.398 -> 66.4454, time= 4.973504 (ms)
+iterations= 100, energy= 67.39731 -> 66.444695, time= 4.448192 (ms)
+iterations= 100, energy= 67.39898 -> 66.445526, time= 4.878176 (ms)
+iterations= 100, energy= 67.39716 -> 66.44486, time= 4.611264 (ms)
 ```

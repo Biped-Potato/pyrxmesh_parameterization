@@ -61,6 +61,7 @@ def main() -> None:
         output_uvs(mesh,uv,args)
     else:
         #uv here would be UV coordinates with z = anything and F are indices
+        print("loading input uvs")
         (uv, fv) = igl.read_triangle_mesh(str(Path(__file__).parent / "input_uvs" / args.uv_file_name))
         if uv.shape[0] != mesh.num_vertices:
             raise ValueError(
@@ -81,34 +82,42 @@ def main() -> None:
     if args.polyscope == 1:
         ps_mesh.add_parameterization_quantity("input_uv", uv_attr.to_numpy_copy(source="device"))
 
-    #perform gradient descent
     gradient = torch.empty(uv.shape, dtype=uv.dtype, device=uv.device)
-
-    optimizer = torch.optim.SGD(
-        [uv],
-        lr = args.learning_rate,
-    )
-
-    def closure():
-        optimizer.zero_grad(set_to_none=True)
-        loss = energy.value_and_grad(uv, out=gradient, copy = "never")
-        uv.grad = gradient
-        return loss
-
-    starting_energy = energy.value_and_grad(uv, out=gradient, copy = "never")
-
-    start_time = time.perf_counter()
     
-    for i in range(args.num_iter):
-        loss = optimizer.step(closure)
-    else:
-        ending_energy = loss.detach().cpu().numpy()
+    #warmup gpu
+    uv_start = uv.detach().clone()
+    warmup_start = time.perf_counter()
 
-    end_time = time.perf_counter()
+    while time.perf_counter() - warmup_start <= 1.0:
+        loss = energy.value_and_grad(uv, out=gradient, copy = "never")
+        with torch.no_grad():
+            uv.add_(gradient, alpha=-args.learning_rate)
 
-    print(f"iterations = {args.num_iter}, energy = {starting_energy:.6f} -> {ending_energy:.6f}, time = {(end_time - start_time) * 1000:.6f} ms")
+    with torch.no_grad():
+        uv.copy_(uv_start)
 
     rx.cuda_stream_synchronize()
+    
+    starting_energy = energy.value_and_grad(uv, out=gradient, copy = "never")
+
+    start_event = torch.cuda.Event(enable_timing=True)
+    end_event = torch.cuda.Event(enable_timing=True)
+
+    start_event.record()
+    for i in range(args.num_iter):
+        loss = energy.value_and_grad(uv, out=gradient, copy = "never")
+        with torch.no_grad():
+            uv.add_(gradient, alpha=-args.learning_rate)   
+    end_event.record();
+
+    end_event.synchronize()
+    total_time = start_event.elapsed_time(end_event)
+    ending_energy = loss.item()
+
+    print(f"iterations = {args.num_iter}, energy = {starting_energy:.6f} -> {ending_energy:.6f}, time = {total_time:.6f} ms")
+
+    rx.cuda_stream_synchronize()
+
     if args.polyscope == 1:
         ps_mesh.add_parameterization_quantity("uv", uv_attr.to_numpy_copy(source="device"))
         ps.show()
